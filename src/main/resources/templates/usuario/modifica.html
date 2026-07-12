@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+
+                <section class="container-fluid p-4" style="max-width: 500px;">
+                    <h3 style="color:#0f2a4a;">Modificar Usuario</h3>
+                    <form method="post" th:action="@{/usuario/guardar}" th:object="${usuario}" class="was-validated">
+                        <input type="hidden" th:field="*{idUsuario}"/>
+                        <input type="hidden" th:field="*{password}"/>
+                        <div class="mb-2">
+                            <label class="form-label">Identificación</label>
+                            <input type="text" th:field="*{identificacion}" class="form-control" readonly/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Primer apellido</label>
+                            <input type="text" th:field="*{primerApellido}" class="form-control" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Segundo apellido</label>
+                            <input type="text" th:field="*{segundoApellido}" class="form-control"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Correo</label>
+                            <input type="email" th:field="*{correo}" class="form-control" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" th:field="*{telefono}" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <select th:field="*{rol}" class="form-select" required>
+                                <option value="ADMINISTRADOR">Administrador</option>
+                                <option value="BIBLIOTECARIO">Bibliotecario</option>
+                                <option value="ESTUDIANTE">Estudiante</option>
+                            </select>
+                        </div>
+                        <a th:href="@{/usuario/listado}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-navy">Guardar</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

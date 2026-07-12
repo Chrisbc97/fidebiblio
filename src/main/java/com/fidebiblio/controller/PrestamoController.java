@@ -42,9 +42,10 @@ public class PrestamoController {
         return "/prestamo/historial";
     }
 
-    // Registrar préstamo
+    // Registrar préstamo.
     @PostMapping("/guardar")
     public String guardar(@RequestParam Integer idUsuario, @RequestParam Integer idLibro,
+            @RequestParam(required = false, defaultValue = "/prestamo/listado") String redirectTo,
             RedirectAttributes redirectAttributes) {
         try {
             prestamoService.registrar(idUsuario, idLibro);
@@ -52,7 +53,7 @@ public class PrestamoController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/prestamo/listado";
+        return "redirect:" + redirectTo;
     }
 
     // Renovar préstamo
@@ -67,7 +68,7 @@ public class PrestamoController {
         return "redirect:/prestamo/listado";
     }
 
-    // Rinalizar o devolver préstamo
+    // Finalizar o devolver préstamo
     @PostMapping("/finalizar")
     public String finalizar(@RequestParam Integer idPrestamo, RedirectAttributes redirectAttributes) {
         try {

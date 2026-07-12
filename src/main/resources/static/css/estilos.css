@@ -1,0 +1,99 @@
+:root {
+    --color-navy: #0f2a4a;
+    --color-navy-dark: #0a1f38;
+    --color-bg: #f3f5f9;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+}
+
+body {
+    background-color: var(--color-bg);
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-sidebar {
+    width: 240px;
+    background-color: var(--color-navy);
+    color: #fff;
+    padding: 1.5rem 1rem;
+    flex-shrink: 0;
+}
+
+.app-sidebar .brand {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.app-sidebar .nav-link {
+    color: #cbd5e1;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.4rem;
+    margin-bottom: 0.2rem;
+}
+
+.app-sidebar .nav-link:hover,
+.app-sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.app-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.app-topbar {
+    background-color: #fff;
+    padding: 0.9rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Botón y elementos con el azul marino del prototipo */
+.btn-navy {
+    background-color: var(--color-navy);
+    color: #fff;
+    border-color: var(--color-navy);
+}
+
+.btn-navy:hover {
+    background-color: var(--color-navy-dark);
+    color: #fff;
+}
+
+/* Insignias de disponibilidad, igual al prototipo */
+.badge-disponible {
+    background-color: var(--color-success);
+    color: #fff;
+}
+
+.badge-prestado {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+/* Tarjetas de libros del catálogo */
+.card-libro img {
+    height: 220px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.card-libro {
+    position: relative;
+}
+
+.card-libro .badge-estado {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

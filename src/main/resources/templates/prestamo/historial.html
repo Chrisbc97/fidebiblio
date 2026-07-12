@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+                <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+                <section class="container-fluid p-4">
+                    <h3 style="color:#0f2a4a;">Mi Historial de Préstamos</h3>
+
+                    <table class="table table-striped table-hover bg-white">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Fecha préstamo</th>
+                                <th>Fecha límite</th>
+                                <th>Fecha devolución</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${prestamos}">
+                                <td th:text="${p.libro.titulo}"></td>
+                                <td th:text="${#temporals.format(p.fechaPrestamo,'dd/MM/yyyy')}"></td>
+                                <td th:text="${#temporals.format(p.fechaLimite,'dd/MM/yyyy')}"></td>
+                                <td th:text="${p.fechaDevolucion != null ? #temporals.format(p.fechaDevolucion,'dd/MM/yyyy') : '-'}"></td>
+                                <td>
+                                    <span th:if="${p.estado == 'ACTIVO'}" class="badge bg-info">Activo</span>
+                                    <span th:if="${p.estado == 'DEVUELTO'}" class="badge badge-disponible">Devuelto</span>
+                                    <span th:if="${p.estado == 'VENCIDO'}" class="badge badge-prestado">Vencido</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(prestamos)}">
+                                <td colspan="5" class="text-center text-muted">No posee préstamos registrados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

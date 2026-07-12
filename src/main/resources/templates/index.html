@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+                <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+                <section class="container-fluid p-4">
+                    <h3 style="color:#0f2a4a;">Catálogo de Libros</h3>
+                    <p class="text-muted">Explora todos nuestros títulos disponibles en la biblioteca.</p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-4">
+                            <form class="d-flex" method="get" th:action="@{/}">
+                                <input type="text" name="titulo" class="form-control me-2" placeholder="Buscar por título"/>
+                                <button class="btn btn-navy" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <form class="d-flex" method="get" th:action="@{/}">
+                                <input type="text" name="autor" class="form-control me-2" placeholder="Buscar por autor"/>
+                                <button class="btn btn-navy" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <form method="get" th:action="@{/}">
+                                <select name="idCategoria" class="form-select" onchange="this.form.submit()">
+                                    <option value="">Todas las categorías</option>
+                                    <option th:each="c : ${categorias}" th:value="${c.idCategoria}" th:text="${c.nombre}"></option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                        <div th:each="l : ${libros}" class="col">
+                            <div class="card h-100 shadow-sm card-libro">
+                                <span th:if="${l.ejemplaresDisponibles > 0}" class="badge badge-disponible badge-estado">Disponible</span>
+                                <span th:if="${l.ejemplaresDisponibles == 0}" class="badge badge-prestado badge-estado">Prestado</span>
+                                <img th:src="${l.rutaImagen}" th:alt="${l.titulo}"/>
+                                <div class="card-body">
+                                    <small class="text-uppercase fw-bold" style="color:#0f2a4a;" th:text="${l.categoria != null ? l.categoria.nombre : ''}"></small>
+                                    <h6 class="card-title" th:text="${l.titulo}"></h6>
+                                    <p class="text-muted mb-2" th:text="${l.autor}"></p>
+                                </div>
+                                <div class="card-footer bg-white border-0">
+                                    <form th:if="${l.ejemplaresDisponibles > 0}" method="post" th:action="@{/prestamo/guardar}">
+                                        <input type="hidden" name="idLibro" th:value="${l.idLibro}"/>
+                                        <input type="hidden" name="idUsuario" th:value="${idUsuarioSesion}"/>
+                                        <input type="hidden" name="redirectTo" value="/"/>
+                                        <button type="submit" class="btn btn-sm btn-navy w-100">Solicitar Préstamo</button>
+                                    </form>
+                                    <form th:if="${l.ejemplaresDisponibles == 0}" method="post" th:action="@{/reserva/guardar}">
+                                        <input type="hidden" name="idLibro" th:value="${l.idLibro}"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Reservar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(libros)}" class="col-12 text-center text-muted py-5">
+                            No se encontraron resultados
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

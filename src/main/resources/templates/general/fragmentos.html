@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <!-- Fragmento #1: head -->
+    <head th:fragment="head">
+        <meta charset="UTF-8"/>
+        <title>FideBiblio</title>
+        <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+        <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
+        <link th:href="@{/css/estilos.css}" rel="stylesheet"/>
+        <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+        <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    </head>
+
+    <body>
+
+        <!-- Fragmento #2: barra lateral -->
+        <div th:fragment="sidebar" class="app-sidebar">
+            <a th:href="@{/}" class="brand"><i class="fa-solid fa-book"></i> FideBiblio</a>
+
+            <a class="nav-link" th:href="@{/}"><i class="fa-solid fa-house"></i> Catálogo</a>
+            <a class="nav-link" th:href="@{/prestamo/historial}"><i class="fa-solid fa-clock-rotate-left"></i> Mis Préstamos</a>
+            <a class="nav-link" th:href="@{/reserva/listado}"><i class="fa-solid fa-bookmark"></i> Mis Reservas</a>
+            <a class="nav-link" th:href="@{/sugerencia/listado}"><i class="fa-solid fa-lightbulb"></i> Sugerencias</a>
+
+            <hr style="border-color: rgba(255,255,255,0.2);"/>
+
+            <div sec:authorize="hasAnyRole('ADMINISTRADOR','BIBLIOTECARIO')">
+                <small class="text-uppercase text-white-50 px-2">Secciones</small>
+                <a class="nav-link" th:href="@{/libro/listado}"><i class="fa-solid fa-book-open"></i> Gestión de Libros</a>
+                <a class="nav-link" th:href="@{/prestamo/listado}"><i class="fa-solid fa-calendar-check"></i> Préstamos</a>
+            </div>
+
+            <div sec:authorize="hasRole('ADMINISTRADOR')">
+                <a class="nav-link" th:href="@{/usuario/listado}"><i class="fa-solid fa-users"></i> Usuarios</a>
+            </div>
+        </div>
+
+        <!-- Fragmento #3: barra superior, con nombre de usuario y logout -->
+        <div th:fragment="topbar" class="app-topbar d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"></h5>
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="fa-solid fa-circle-user"></i> <span sec:authentication="name"></span></span>
+                <form method="post" th:action="@{/logout}" class="mb-0">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">
+                        <i class="fa-solid fa-right-from-bracket"></i> Salir
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fragmento #4: mensajes de éxito o error -->
+        <div th:fragment="mostrarToast" class="container-fluid mt-3">
+            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${todoOk}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+
+    </body>
+</html>

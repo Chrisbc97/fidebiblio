@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+
+                <section class="container-fluid p-4" style="max-width: 500px;">
+                    <h3 style="color:#0f2a4a;">Modificar Libro</h3>
+                    <form method="post" th:action="@{/libro/guardar}" th:object="${libro}" enctype="multipart/form-data" class="was-validated">
+                        <input type="hidden" th:field="*{idLibro}"/>
+                        <div class="mb-2">
+                            <label class="form-label">ISBN</label>
+                            <input type="text" th:field="*{isbn}" class="form-control" readonly/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Título</label>
+                            <input type="text" th:field="*{titulo}" class="form-control" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Autor</label>
+                            <input type="text" th:field="*{autor}" class="form-control" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Editorial</label>
+                            <input type="text" th:field="*{editorial}" class="form-control"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Año de publicación</label>
+                            <input type="number" th:field="*{anioPublicacion}" class="form-control"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Categoría</label>
+                            <select name="categoria.idCategoria" class="form-select">
+                                <option th:each="c : ${categorias}" th:value="${c.idCategoria}" th:text="${c.nombre}"
+                                        th:selected="${libro.categoria != null and libro.categoria.idCategoria == c.idCategoria}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Cantidad de ejemplares</label>
+                            <input type="number" th:field="*{cantidadEjemplares}" class="form-control" min="0" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Ubicación física</label>
+                            <input type="text" th:field="*{ubicacionFisica}" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nueva portada (opcional)</label>
+                            <input type="file" name="imagenFile" class="form-control" accept="image/*"/>
+                        </div>
+                        <a th:href="@{/libro/listado}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-navy">Guardar</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

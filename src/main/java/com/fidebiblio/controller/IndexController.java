@@ -2,6 +2,8 @@ package com.fidebiblio.controller;
 
 import com.fidebiblio.service.CategoriaService;
 import com.fidebiblio.service.LibroService;
+import com.fidebiblio.service.UsuarioService;
+import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,18 +14,21 @@ public class IndexController {
 
     private final LibroService libroService;
     private final CategoriaService categoriaService;
+    private final UsuarioService usuarioService;
 
-    public IndexController(LibroService libroService, CategoriaService categoriaService) {
+    public IndexController(LibroService libroService, CategoriaService categoriaService,
+            UsuarioService usuarioService) {
         this.libroService = libroService;
         this.categoriaService = categoriaService;
+        this.usuarioService = usuarioService;
     }
 
-    // Catálogo principal, con búsqueda por título, autor, categoría
+    // Catálogo principal, con búsqueda por título, autor, categoría 
     @GetMapping("/")
     public String index(@RequestParam(required = false) String titulo,
             @RequestParam(required = false) String autor,
             @RequestParam(required = false) Integer idCategoria,
-            Model model) {
+            Model model, Principal principal) {
 
         if (titulo != null && !titulo.isBlank()) {
             model.addAttribute("libros", libroService.buscarPorTitulo(titulo));
@@ -36,6 +41,8 @@ public class IndexController {
         }
 
         model.addAttribute("categorias", categoriaService.getCategorias(true));
+        model.addAttribute("idUsuarioSesion",
+                usuarioService.getUsuarioPorCorreo(principal.getName()).getIdUsuario());
         return "/index";
     }
 }

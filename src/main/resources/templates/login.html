@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body style="background-color: #f3f5f9;">
+
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="card shadow-sm" style="width: 400px;">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="fa-solid fa-book fa-2x" style="color: #0f2a4a;"></i>
+                    <h4 class="mt-2 mb-0" style="color: #0f2a4a; font-weight: 700;">FideBiblio</h4>
+                    <small class="text-muted">Gestión Académica</small>
+                </div>
+
+                <div th:if="${param.error}" class="alert alert-danger text-center py-2">
+                    Correo o contraseña incorrectos.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-info text-center py-2">
+                    Sesión cerrada correctamente.
+                </div>
+
+                <form method="post" th:action="@{/login}">
+                    <div class="mb-3">
+                        <label class="form-label small text-uppercase text-muted">Correo Electrónico</label>
+                        <input type="text" name="username" class="form-control" placeholder="nombre@correo.com" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-uppercase text-muted">Contraseña</label>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required/>
+                    </div>
+                    <button type="submit" class="btn w-100 text-white" style="background-color: #0f2a4a;">
+                        Iniciar Sesión
+                    </button>
+                </form>
+
+                <hr/>
+                <small class="text-muted d-block text-center">
+                    admin: cbrenes00620@ufide.ac.cr / admin123<br/>
+                    bibliotecario: jesquivel90257@ufide.ac.cr / biblio123<br/>
+                    estudiante: scastillo40405@ufide.ac.cr / estu123
+                </small>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
