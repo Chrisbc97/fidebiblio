@@ -27,23 +27,17 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
+    public Usuario getUsuarioPorCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new IllegalArgumentException("No existe un usuario con ese correo"));
+    }
+
+    @Transactional(readOnly = true)
     public List<Usuario> buscar(String termino) {
         return usuarioRepository.findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCase(termino, termino);
     }
 
-    // Valida los credenciales del inicio de sesión.
-    @Transactional(readOnly = true)
-    public Optional<Usuario> login(String correo, String password) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
-        if (usuarioOpt.isPresent()
-                && usuarioOpt.get().getPassword().equals(password)
-                && Boolean.TRUE.equals(usuarioOpt.get().getActivo())) {
-            return usuarioOpt;
-        }
-        return Optional.empty();
-    }
-
-    // Registrar usuario, validan duplicados
+    // Registrar usuario, valida duplicados
     @Transactional
     public Usuario registrar(Usuario usuario) {
         if (usuarioRepository.existsByIdentificacion(usuario.getIdentificacion())) {
@@ -69,7 +63,7 @@ public class UsuarioService {
         return usuarioRepository.save(existente);
     }
 
-    // Desactivar usuario (no se elimina)
+    // Desactivar usuario
     @Transactional
     public void desactivar(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
