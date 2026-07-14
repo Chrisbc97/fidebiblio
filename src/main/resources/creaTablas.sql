@@ -37,7 +37,7 @@ CREATE TABLE libro (
   cantidad_ejemplares INT DEFAULT 0,
   ejemplares_disponibles INT DEFAULT 0,
   ubicacion_fisica VARCHAR(60),
-  ruta_imagen VARCHAR(255),
+  ruta_imagen TEXT,
   activo BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id_libro),
   FOREIGN KEY fk_libro_categoria (id_categoria) REFERENCES categoria(id_categoria)
