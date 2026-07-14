@@ -25,7 +25,7 @@ CREATE TABLE usuario (
   PRIMARY KEY (id_usuario)
 ) ENGINE = InnoDB;
 
--- Tabla de libros (catálogo)
+-- Catálogo
 CREATE TABLE libro (
   id_libro INT NOT NULL AUTO_INCREMENT,
   isbn VARCHAR(20) NOT NULL UNIQUE,
@@ -83,17 +83,22 @@ CREATE TABLE sugerencia (
   FOREIGN KEY fk_sugerencia_usuario (id_usuario) REFERENCES usuario(id_usuario)
 ) ENGINE = InnoDB;
 
--- Usuarios del equipo del proyecto
+
+-- Datos: usuarios, categorías y libros del prototipo 
+
+
+-- Usuarios de prueba 
 INSERT INTO usuario (identificacion, nombre, primer_apellido, segundo_apellido, correo, telefono, password, rol) VALUES
 ('101110111', 'Christopher', 'Brenes', '', 'cbrenes00620@ufide.ac.cr', '88881111', 'admin123', 'ADMINISTRADOR'),
-('202220222', 'Joseph', 'Esquivel', '', 'jesquivel90257@ufide.ac.cr', '88882222', 'biblio123', 'BIBLIOTECARIO'),
-('303330333', 'King', 'Castillo', '', 'scastillo40405@ufide.ac.cr', '88883333', 'estu123', 'ESTUDIANTE');
+('404040404', 'Andrea', 'Solís', '', 'asolis00001@ufide.ac.cr', '88882222', 'biblio123', 'BIBLIOTECARIO'),
+('505050505', 'Mateo', 'Vargas', '', 'mvargas00002@ufide.ac.cr', '88883333', 'estu123', 'ESTUDIANTE');
 
 -- Categorías según el prototipo
 INSERT INTO categoria (nombre) VALUES
 ('Ingeniería Informática'), ('Filosofía'), ('Medicina'), ('Arquitectura'),
 ('Física'), ('Historia'), ('Economía');
 
+-- 8 Libros
 INSERT INTO libro (isbn, titulo, autor, editorial, anio_publicacion, id_categoria, cantidad_ejemplares, ejemplares_disponibles, ubicacion_fisica, ruta_imagen) VALUES
 ('978-1000000001', 'Algoritmos Modernos', 'Robert Sedgewick', 'Fidelitas Editorial', 2023, 1, 3, 3, 'Est. A-1', 'https://firebasestorage.googleapis.com/v0/b/fidebiblio.firebasestorage.app/o/fidebiblio%2Flibro%2FAlgoritmos%20modernos.jpg?alt=media&token=edb0c800-ff1e-4ecb-8d97-b230a50bc080'),
 ('978-1000000002', 'El Dilema de la Conciencia', 'Elena Valdés', 'Fidelitas Editorial', 2022, 2, 2, 0, 'Est. B-1', 'https://firebasestorage.googleapis.com/v0/b/fidebiblio.firebasestorage.app/o/fidebiblio%2Flibro%2FEl%20dilema%20de%20la%20convinencia.jpg?alt=media&token=9f6b39e1-0653-44f0-9e8f-6c3f90af04a3'),
@@ -104,6 +109,6 @@ INSERT INTO libro (isbn, titulo, autor, editorial, anio_publicacion, id_categori
 ('978-1000000007', 'Economía Avanzada', 'Mark Thompson', 'Fidelitas Editorial', 2022, 7, 2, 2, 'Est. G-1', 'https://firebasestorage.googleapis.com/v0/b/fidebiblio.firebasestorage.app/o/fidebiblio%2Flibro%2FEconomía%20Avanzada.jpg?alt=media&token=dcf80e43-acc9-4753-9173-a99a89e27614'),
 ('978-1000000008', 'Big Data y Data Mining', 'Victor Ramos', 'Fidelitas Editorial', 2024, 1, 3, 3, 'Est. H-1', 'https://firebasestorage.googleapis.com/v0/b/fidebiblio.firebasestorage.app/o/fidebiblio%2Flibro%2FBig%20Data%20y%20Data%20mining.jpg?alt=media&token=f1591336-da27-4825-a96f-49599fbad250');
 
--- Préstamo de ejemplo, asignado a King (estudiante)
+-- Préstamo de ejemplo
 INSERT INTO prestamo (id_usuario, id_libro, fecha_limite, estado) VALUES
 (3, 2, DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'ACTIVO');

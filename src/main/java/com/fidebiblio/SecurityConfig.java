@@ -58,16 +58,16 @@ public class SecurityConfig {
                 .password(passwordEncoder.encode("admin123"))
                 .roles("ADMINISTRADOR")
                 .build();
-        UserDetails joseph = User.builder()
-                .username("jesquivel90257@ufide.ac.cr")
+        UserDetails andrea = User.builder()
+                .username("asolis00001@ufide.ac.cr")
                 .password(passwordEncoder.encode("biblio123"))
                 .roles("BIBLIOTECARIO")
                 .build();
-        UserDetails king = User.builder()
-                .username("scastillo40405@ufide.ac.cr")
+        UserDetails mateo = User.builder()
+                .username("mvargas00002@ufide.ac.cr")
                 .password(passwordEncoder.encode("estu123"))
                 .roles("ESTUDIANTE")
                 .build();
-        return new InMemoryUserDetailsManager(christopher, joseph, king);
+        return new InMemoryUserDetailsManager(christopher, andrea, mateo);
     }
 }
