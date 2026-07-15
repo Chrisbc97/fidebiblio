@@ -34,7 +34,7 @@ public class Libro implements Serializable {
     @Column(length = 100)
     private String editorial;
 
-    @Column(name = "anio_publicacion")
+    @Column(name = "anio_publicacion") //No se pone la ñ para evitar errores
     private Integer anioPublicacion;
 
     @ManyToOne

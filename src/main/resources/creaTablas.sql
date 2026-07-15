@@ -85,8 +85,6 @@ CREATE TABLE sugerencia (
 
 
 -- Datos: usuarios, categorías y libros del prototipo 
-
-
 -- Usuarios de prueba 
 INSERT INTO usuario (identificacion, nombre, primer_apellido, segundo_apellido, correo, telefono, password, rol) VALUES
 ('101110111', 'Christopher', 'Brenes', '', 'cbrenes00620@ufide.ac.cr', '88881111', 'admin123', 'ADMINISTRADOR'),

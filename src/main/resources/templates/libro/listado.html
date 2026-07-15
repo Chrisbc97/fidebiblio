@@ -1,122 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head th:replace="~{general/fragmentos :: head}"></head>
-<body>
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
 
-<div class="app-layout">
-    <div th:replace="~{general/fragmentos :: sidebar}"></div>
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
 
-    <div class="app-content">
-        <div th:replace="~{general/fragmentos :: topbar}"></div>
-        <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+                <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
 
-        <section class="container-fluid p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 style="color:#0f2a4a;">Gestión de Libros (<span th:text="${totalLibros}"></span>)</h3>
-                <button class="btn btn-navy" data-bs-toggle="modal" data-bs-target="#modalAgregar">
-                    <i class="fa-solid fa-plus"></i> Agregar Nuevo Libro
-                </button>
+                <section class="container-fluid p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 style="color:#0f2a4a;">Gestión de Libros (<span th:text="${totalLibros}"></span>)</h3>
+                        <button class="btn btn-navy" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                            <i class="fa-solid fa-plus"></i> Agregar Nuevo Libro
+                        </button>
+                    </div>
+
+                    <table class="table table-striped table-hover bg-white">
+                        <thead>
+                            <tr>
+                                <th>Portada</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Categoría</th>
+                                <th>Ejemplares</th>
+                                <th>Disponibles</th>
+                                <th>Activo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="l : ${libros}">
+                                <td><img th:src="${l.rutaImagen}" style="width:45px;height:60px;object-fit:cover;" th:alt="${l.titulo}"/></td>
+                                <td th:text="${l.titulo}"></td>
+                                <td th:text="${l.autor}"></td>
+                                <td th:text="${l.categoria != null ? l.categoria.nombre : ''}"></td>
+                                <td th:text="${l.cantidadEjemplares}"></td>
+                                <td th:text="${l.ejemplaresDisponibles}"></td>
+                                <td>
+                                    <span th:if="${l.activo}" class="badge badge-disponible">Sí</span>
+                                    <span th:unless="${l.activo}" class="badge bg-secondary">No</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/libro/modificar/{id}(id=${l.idLibro})}">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <form class="d-inline" method="post" th:action="@{/libro/eliminar}"
+                                          onsubmit="return confirm('¿Eliminar este libro?');">
+                                        <input type="hidden" name="idLibro" th:value="${l.idLibro}"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
             </div>
-
-            <table class="table table-striped table-hover bg-white">
-                <thead>
-                    <tr>
-                        <th>Portada</th>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>Categoría</th>
-                        <th>Ejemplares</th>
-                        <th>Disponibles</th>
-                        <th>Activo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="l : ${libros}">
-                        <td><img th:src="${l.rutaImagen}" style="width:45px;height:60px;object-fit:cover;" th:alt="${l.titulo}"/></td>
-                        <td th:text="${l.titulo}"></td>
-                        <td th:text="${l.autor}"></td>
-                        <td th:text="${l.categoria != null ? l.categoria.nombre : ''}"></td>
-                        <td th:text="${l.cantidadEjemplares}"></td>
-                        <td th:text="${l.ejemplaresDisponibles}"></td>
-                        <td>
-                            <span th:if="${l.activo}" class="badge badge-disponible">Sí</span>
-                            <span th:unless="${l.activo}" class="badge bg-secondary">No</span>
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/libro/modificar/{id}(id=${l.idLibro})}">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <form class="d-inline" method="post" th:action="@{/libro/eliminar}"
-                                  onsubmit="return confirm('¿Eliminar este libro?');">
-                                <input type="hidden" name="idLibro" th:value="${l.idLibro}"/>
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </div>
-</div>
-
-<div class="modal fade" id="modalAgregar" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" th:action="@{/libro/guardar}" enctype="multipart/form-data" class="was-validated">
-                <div class="modal-header" style="background-color:#0f2a4a;">
-                    <h5 class="modal-title text-white">Agregar Nuevo Libro</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label class="form-label">ISBN</label>
-                        <input type="text" name="isbn" class="form-control" required/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Título</label>
-                        <input type="text" name="titulo" class="form-control" required/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Autor</label>
-                        <input type="text" name="autor" class="form-control" required/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Editorial</label>
-                        <input type="text" name="editorial" class="form-control"/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Año de publicación</label>
-                        <input type="number" name="anioPublicacion" class="form-control"/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Categoría</label>
-                        <select name="categoria.idCategoria" class="form-select">
-                            <option th:each="c : ${categorias}" th:value="${c.idCategoria}" th:text="${c.nombre}"></option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Cantidad de ejemplares</label>
-                        <input type="number" name="cantidadEjemplares" class="form-control" min="0" required/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Ubicación física</label>
-                        <input type="text" name="ubicacionFisica" class="form-control"/>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Portada del libro</label>
-                        <input type="file" name="imagenFile" class="form-control" accept="image/*"/>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-navy">Guardar</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
 
-</body>
+        <div class="modal fade" id="modalAgregar" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/libro/guardar}" enctype="multipart/form-data" class="was-validated">
+                        <div class="modal-header" style="background-color:#0f2a4a;">
+                            <h5 class="modal-title text-white">Agregar Nuevo Libro</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-2">
+                                <label class="form-label">ISBN</label>
+                                <input type="text" name="isbn" class="form-control" required/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Título</label>
+                                <input type="text" name="titulo" class="form-control" required/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Autor</label>
+                                <input type="text" name="autor" class="form-control" required/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Editorial</label>
+                                <input type="text" name="editorial" class="form-control"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Año de publicación</label>
+                                <input type="number" name="anioPublicacion" class="form-control"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Categoría</label>
+                                <select name="categoria.idCategoria" class="form-select">
+                                    <option th:each="c : ${categorias}" th:value="${c.idCategoria}" th:text="${c.nombre}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Cantidad de ejemplares</label>
+                                <input type="number" name="cantidadEjemplares" class="form-control" min="0" required/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Ubicación física</label>
+                                <input type="text" name="ubicacionFisica" class="form-control"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Portada del libro</label>
+                                <input type="file" name="imagenFile" class="form-control" accept="image/*"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-navy">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </body>
 </html>

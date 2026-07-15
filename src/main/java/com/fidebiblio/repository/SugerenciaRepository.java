@@ -12,7 +12,7 @@ public interface SugerenciaRepository extends JpaRepository<Sugerencia, Integer>
 
     List<Sugerencia> findAllByOrderByFechaCreacionDesc();
 
-    // HU-15 escenario 2: detectar si ya existe una propuesta igual pendiente, para sumar voto
+    // Detectar si ya existe una propuesta igual pendiente, para sumar voto
     @Query("SELECT s FROM Sugerencia s WHERE LOWER(s.titulo) = LOWER(:titulo) AND s.estado = :estado")
     Optional<Sugerencia> buscarPendientePorTitulo(String titulo, String estado);
 }
