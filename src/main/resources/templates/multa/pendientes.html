@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+                <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+                <section class="container-fluid p-4">
+                    <h3 style="color:#0f2a4a;">Multas Pendientes</h3>
+
+                    <table class="table table-striped table-hover bg-white">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Libro</th>
+                                <th>Días de atraso</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="m : ${multas}">
+                                <td th:text="${m.prestamo.usuario.nombreCompleto}"></td>
+                                <td th:text="${m.prestamo.libro.titulo}"></td>
+                                <td th:text="${m.diasAtraso}"></td>
+                                <td th:text="${'₡' + m.monto}"></td>
+                                <td th:text="${#temporals.format(m.fechaGeneracion,'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <form method="post" th:action="@{/multa/pagar}">
+                                        <input type="hidden" name="idMulta" th:value="${m.idMulta}"/>
+                                        <button type="submit" class="btn btn-sm btn-navy">Marcar Pagada</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(multas)}">
+                                <td colspan="6" class="text-center text-muted">No hay multas pendientes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

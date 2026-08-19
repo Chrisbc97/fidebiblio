@@ -21,13 +21,15 @@ public class PrestamoService {
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
     private final ConfiguracionService configuracionService;
+    private final MultaService multaService;
 
     public PrestamoService(PrestamoRepository prestamoRepository, UsuarioRepository usuarioRepository,
-            LibroRepository libroRepository, ConfiguracionService configuracionService) {
+            LibroRepository libroRepository, ConfiguracionService configuracionService, MultaService multaService) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.libroRepository = libroRepository;
         this.configuracionService = configuracionService;
+        this.multaService = multaService;
     }
 
     @Transactional(readOnly = true)
@@ -89,6 +91,10 @@ public class PrestamoService {
     public Prestamo finalizar(Integer idPrestamo) {
         Prestamo prestamo = prestamoRepository.findById(idPrestamo)
                 .orElseThrow(() -> new IllegalArgumentException("No existe el préstamo"));
+
+        // Genera la multa usando la fecha límite antes de marcar la devolución
+        multaService.generarSiCorresponde(prestamo);
+
         prestamo.setEstado("DEVUELTO");
         prestamo.setFechaDevolucion(LocalDate.now());
 
