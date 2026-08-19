@@ -53,6 +53,10 @@ public class PrestamoService {
             throw new IllegalStateException("No hay ejemplares disponibles para préstamo");
         }
 
+        if ("MAL_ESTADO".equals(libro.getEstadoFisico())) {
+            throw new IllegalStateException("El libro se encuentra dañado y no está disponible para préstamo");
+        }
+
         int diasPrestamo = configuracionService.getValorEntero("dias_prestamo", DIAS_PRESTAMO);
 
         Prestamo prestamo = new Prestamo();

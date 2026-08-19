@@ -104,4 +104,13 @@ public class LibroService {
         libro.setActivo(false);
         libroRepository.save(libro);
     }
+
+    // Actualiza el estado físico del libro. Si queda "DANADO", deja de estar disponible para préstamo.
+    @Transactional
+    public void actualizarEstadoFisico(Integer idLibro, String estadoFisico) {
+        Libro libro = libroRepository.findById(idLibro)
+                .orElseThrow(() -> new IllegalArgumentException("El libro no existe"));
+        libro.setEstadoFisico(estadoFisico);
+        libroRepository.save(libro);
+    }
 }

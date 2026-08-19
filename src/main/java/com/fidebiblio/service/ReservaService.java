@@ -47,6 +47,10 @@ public class ReservaService {
             throw new IllegalStateException("El libro tiene ejemplares disponibles, use préstamo directo");
         }
 
+        if ("MAL_ESTADO".equals(libro.getEstadoFisico())) {
+            throw new IllegalStateException("El libro se encuentra dañado y no está disponible para préstamo");
+        }
+
         int limiteReservas = configuracionService.getValorEntero("limite_reservas", LIMITE_RESERVAS);
         long reservasActivas = reservaRepository.buscarActivasPorUsuario(idUsuario, "ACTIVA").size();
         if (reservasActivas >= limiteReservas) {

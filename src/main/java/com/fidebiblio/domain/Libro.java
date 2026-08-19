@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.Data;
 
-
 @Data
 @Entity
 @Table(name = "libro")
@@ -55,4 +54,8 @@ public class Libro implements Serializable {
     private String rutaImagen;
 
     private Boolean activo = true;
+
+    // EXCELENTE, BUENO, REGULAR, DAÑADO
+    @Column(name = "estado_fisico", length = 20)
+    private String estadoFisico = "EXCELENTE";
 }

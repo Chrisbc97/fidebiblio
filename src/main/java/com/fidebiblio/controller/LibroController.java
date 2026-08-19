@@ -61,6 +61,19 @@ public class LibroController {
         return "redirect:/libro/listado";
     }
 
+    // Actualiza el estado físico del libro (bibliotecario/admin)
+    @PostMapping("/estado-fisico")
+    public String actualizarEstadoFisico(@RequestParam Integer idLibro, @RequestParam String estadoFisico,
+            RedirectAttributes redirectAttributes) {
+        try {
+            libroService.actualizarEstadoFisico(idLibro, estadoFisico);
+            redirectAttributes.addFlashAttribute("todoOk", "Estado físico actualizado satisfactoriamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/libro/listado";
+    }
+
     @GetMapping("/modificar/{idLibro}")
     public String modificar(@PathVariable Integer idLibro, Model model, RedirectAttributes redirectAttributes) {
         Optional<Libro> libroOpt = libroService.getLibro(idLibro);

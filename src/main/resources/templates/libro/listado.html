@@ -28,6 +28,7 @@
                                 <th>Categoría</th>
                                 <th>Ejemplares</th>
                                 <th>Disponibles</th>
+                                <th>Estado Físico</th>
                                 <th>Activo</th>
                                 <th>Acciones</th>
                             </tr>
@@ -40,6 +41,17 @@
                                 <td th:text="${l.categoria != null ? l.categoria.nombre : ''}"></td>
                                 <td th:text="${l.cantidadEjemplares}"></td>
                                 <td th:text="${l.ejemplaresDisponibles}"></td>
+                                <td>
+                                    <form method="post" th:action="@{/libro/estado-fisico}" class="d-flex gap-1">
+                                        <input type="hidden" name="idLibro" th:value="${l.idLibro}"/>
+                                        <select name="estadoFisico" class="form-select form-select-sm" onchange="this.form.submit()">
+                                            <option value="EXCELENTE" th:selected="${l.estadoFisico == 'EXCELENTE'}">Excelente</option>
+                                            <option value="BUENO" th:selected="${l.estadoFisico == 'BUENO'}">Bueno</option>
+                                            <option value="REGULAR" th:selected="${l.estadoFisico == 'REGULAR'}">Regular</option>
+                                            <option value="MAL_ESTADO" th:selected="${l.estadoFisico == 'MAL_ESTADO'}">Mal Estado</option>
+                                        </select>
+                                    </form>
+                                </td>
                                 <td>
                                     <span th:if="${l.activo}" class="badge badge-disponible">Sí</span>
                                     <span th:unless="${l.activo}" class="badge bg-secondary">No</span>
