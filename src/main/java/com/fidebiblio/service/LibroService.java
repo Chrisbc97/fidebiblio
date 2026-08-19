@@ -1,8 +1,14 @@
 package com.fidebiblio.service;
 
+import com.fidebiblio.domain.Categoria;
 import com.fidebiblio.domain.Libro;
+import com.fidebiblio.repository.CategoriaRepository;
 import com.fidebiblio.repository.LibroRepository;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -13,10 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class LibroService {
 
     private final LibroRepository libroRepository;
+    private final CategoriaRepository categoriaRepository;
     private final FirebaseStorageService firebaseStorageService;
 
-    public LibroService(LibroRepository libroRepository, FirebaseStorageService firebaseStorageService) {
+    public LibroService(LibroRepository libroRepository, CategoriaRepository categoriaRepository,
+            FirebaseStorageService firebaseStorageService) {
         this.libroRepository = libroRepository;
+        this.categoriaRepository = categoriaRepository;
         this.firebaseStorageService = firebaseStorageService;
     }
 
@@ -105,12 +114,84 @@ public class LibroService {
         libroRepository.save(libro);
     }
 
-    // Actualiza el estado físico del libro. Si queda "DANADO", deja de estar disponible para préstamo.
+    // Actualiza el estado físico del libro
     @Transactional
     public void actualizarEstadoFisico(Integer idLibro, String estadoFisico) {
         Libro libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new IllegalArgumentException("El libro no existe"));
         libro.setEstadoFisico(estadoFisico);
         libroRepository.save(libro);
+    }
+
+    // Carga de libros desde un archivo CSV
+    // Formato: isbn,titulo,autor,editorial,anioPublicacion,nombreCategoria,cantidadEjemplares
+    @Transactional
+    public List<String> cargarDesdeCSV(MultipartFile archivo) throws IOException {
+        List<String> resultado = new ArrayList<>();
+        int exitosos = 0;
+        int fallidos = 0;
+
+        try (BufferedReader lector = new BufferedReader(
+                new InputStreamReader(archivo.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String linea;
+            int numeroFila = 0;
+            boolean primeraLinea = true;
+
+            while ((linea = lector.readLine()) != null) {
+                numeroFila++;
+                if (primeraLinea) {
+                    primeraLinea = false;
+                    continue;
+                }
+                if (linea.isBlank()) {
+                    continue;
+                }
+
+                String[] columnas = linea.split(",");
+
+                try {
+                    if (columnas.length < 7) {
+                        throw new IllegalArgumentException("Faltan columnas (se esperan 7)");
+                    }
+
+                    String isbn = columnas[0].trim();
+                    String titulo = columnas[1].trim();
+                    String autor = columnas[2].trim();
+                    String editorial = columnas[3].trim();
+                    Integer anioPublicacion = Integer.parseInt(columnas[4].trim());
+                    String nombreCategoria = columnas[5].trim();
+                    Integer cantidadEjemplares = Integer.parseInt(columnas[6].trim());
+
+                    if (libroRepository.existsByIsbn(isbn)) {
+                        throw new IllegalArgumentException("El ISBN " + isbn + " ya existe");
+                    }
+
+                    Categoria categoria = categoriaRepository.findByNombreIgnoreCase(nombreCategoria)
+                            .orElseThrow(() -> new IllegalArgumentException(
+                                    "La categoría \"" + nombreCategoria + "\" no existe"));
+
+                    Libro libro = new Libro();
+                    libro.setIsbn(isbn);
+                    libro.setTitulo(titulo);
+                    libro.setAutor(autor);
+                    libro.setEditorial(editorial);
+                    libro.setAnioPublicacion(anioPublicacion);
+                    libro.setCategoria(categoria);
+                    libro.setCantidadEjemplares(cantidadEjemplares);
+                    libro.setEjemplaresDisponibles(cantidadEjemplares);
+
+                    libroRepository.save(libro);
+                    exitosos++;
+
+                } catch (Exception e) {
+                    fallidos++;
+                    resultado.add("Fila " + numeroFila + ": " + e.getMessage());
+                }
+            }
+        }
+
+        resultado.add(0, exitosos + " libro(s) cargado(s) satisfactoriamente, " + fallidos + " con error(es)");
+        return resultado;
     }
 }

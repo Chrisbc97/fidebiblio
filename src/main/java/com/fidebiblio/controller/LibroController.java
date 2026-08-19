@@ -7,7 +7,9 @@ import com.fidebiblio.service.LibroService;
 import com.fidebiblio.service.NotificacionService;
 import com.fidebiblio.service.UsuarioService;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,6 +82,22 @@ public class LibroController {
             redirectAttributes.addFlashAttribute("todoOk", "Estado físico actualizado satisfactoriamente");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/libro/listado";
+    }
+
+    // Carga masiva de libros desde archivo CSV (bibliotecario/admin)
+    @PostMapping("/cargar-csv")
+    public String cargarCSV(@RequestParam MultipartFile archivoCsv, RedirectAttributes redirectAttributes) {
+        if (archivoCsv.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un archivo CSV");
+            return "redirect:/libro/listado";
+        }
+        try {
+            List<String> resultado = libroService.cargarDesdeCSV(archivoCsv);
+            redirectAttributes.addFlashAttribute("resultadoCarga", resultado);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo leer el archivo CSV");
         }
         return "redirect:/libro/listado";
     }

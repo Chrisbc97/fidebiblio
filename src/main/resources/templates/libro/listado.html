@@ -14,9 +14,21 @@
                 <section class="container-fluid p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 style="color:#0f2a4a;">Gestión de Libros (<span th:text="${totalLibros}"></span>)</h3>
-                        <button class="btn btn-navy" data-bs-toggle="modal" data-bs-target="#modalAgregar">
-                            <i class="fa-solid fa-plus"></i> Agregar Nuevo Libro
-                        </button>
+                        <div>
+                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalCargaCSV">
+                                <i class="fa-solid fa-file-csv"></i> Carga Masiva
+                            </button>
+                            <button class="btn btn-navy" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                                <i class="fa-solid fa-plus"></i> Agregar Nuevo Libro
+                            </button>
+                        </div>
+                    </div>
+
+                    <div th:if="${resultadoCarga}" class="alert alert-info">
+                        <strong>Resultado de la carga masiva:</strong>
+                        <ul class="mb-0">
+                            <li th:each="linea : ${resultadoCarga}" th:text="${linea}"></li>
+                        </ul>
                     </div>
 
                     <table class="table table-striped table-hover bg-white">
@@ -124,6 +136,33 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-navy">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalCargaCSV" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/libro/cargar-csv}" enctype="multipart/form-data">
+                        <div class="modal-header" style="background-color:#0f2a4a;">
+                            <h5 class="modal-title text-white">Carga Masiva de Libros</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="small text-muted">
+                                El archivo debe ser <code>.csv</code>, con encabezado, y cada fila con este orden:<br/>
+                                <code>isbn,titulo,autor,editorial,anioPublicacion,nombreCategoria,cantidadEjemplares</code>
+                            </p>
+                            <div class="mb-2">
+                                <label class="form-label">Archivo CSV</label>
+                                <input type="file" name="archivoCsv" class="form-control" accept=".csv" required/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-navy">Cargar</button>
                         </div>
                     </form>
                 </div>
