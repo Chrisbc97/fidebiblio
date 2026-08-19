@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+                <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+                <section class="container-fluid p-4">
+                    <h3 style="color:#0f2a4a;">Configuración del Sistema</h3>
+                    <p class="text-muted">Parámetros globales que controlan el comportamiento de la biblioteca.</p>
+
+                    <div class="row g-3">
+                        <div class="col-md-4" th:each="c : ${configuraciones}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="text-uppercase text-muted" th:text="${c.atributo}"></h6>
+                                    <form method="post" th:action="@{/configuracion/guardar}" class="d-flex gap-2">
+                                        <input type="hidden" name="idConfiguracion" th:value="${c.idConfiguracion}"/>
+                                        <input type="text" name="valor" th:value="${c.valor}" class="form-control" required/>
+                                        <button type="submit" class="btn btn-navy">
+                                            <i class="fa-solid fa-floppy-disk"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

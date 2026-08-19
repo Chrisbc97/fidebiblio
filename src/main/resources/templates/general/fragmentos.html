@@ -35,6 +35,7 @@
 
             <div sec:authorize="hasRole('ADMINISTRADOR')">
                 <a class="nav-link" th:href="@{/usuario/listado}"><i class="fa-solid fa-users"></i> Usuarios</a>
+                <a class="nav-link" th:href="@{/configuracion/listado}"><i class="fa-solid fa-gear"></i> Configuración</a>
             </div>
         </div>
 

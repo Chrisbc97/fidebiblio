@@ -19,12 +19,14 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
+    private final ConfiguracionService configuracionService;
 
     public ReservaService(ReservaRepository reservaRepository, UsuarioRepository usuarioRepository,
-            LibroRepository libroRepository) {
+            LibroRepository libroRepository, ConfiguracionService configuracionService) {
         this.reservaRepository = reservaRepository;
         this.usuarioRepository = usuarioRepository;
         this.libroRepository = libroRepository;
+        this.configuracionService = configuracionService;
     }
 
     @Transactional(readOnly = true)
@@ -45,10 +47,11 @@ public class ReservaService {
             throw new IllegalStateException("El libro tiene ejemplares disponibles, use préstamo directo");
         }
 
+        int limiteReservas = configuracionService.getValorEntero("limite_reservas", LIMITE_RESERVAS);
         long reservasActivas = reservaRepository.buscarActivasPorUsuario(idUsuario, "ACTIVA").size();
-        if (reservasActivas >= LIMITE_RESERVAS) {
+        if (reservasActivas >= limiteReservas) {
             throw new IllegalStateException(
-                    "Ha alcanzado el tope máximo de " + LIMITE_RESERVAS + " reservas simultáneas permitidas");
+                    "Ha alcanzado el tope máximo de " + limiteReservas + " reservas simultáneas permitidas");
         }
 
         Reserva reserva = new Reserva();

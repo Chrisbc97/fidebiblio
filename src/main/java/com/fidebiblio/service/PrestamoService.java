@@ -20,12 +20,14 @@ public class PrestamoService {
     private final PrestamoRepository prestamoRepository;
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
+    private final ConfiguracionService configuracionService;
 
     public PrestamoService(PrestamoRepository prestamoRepository, UsuarioRepository usuarioRepository,
-            LibroRepository libroRepository) {
+            LibroRepository libroRepository, ConfiguracionService configuracionService) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.libroRepository = libroRepository;
+        this.configuracionService = configuracionService;
     }
 
     @Transactional(readOnly = true)
@@ -51,10 +53,12 @@ public class PrestamoService {
             throw new IllegalStateException("No hay ejemplares disponibles para préstamo");
         }
 
+        int diasPrestamo = configuracionService.getValorEntero("dias_prestamo", DIAS_PRESTAMO);
+
         Prestamo prestamo = new Prestamo();
         prestamo.setUsuario(usuario);
         prestamo.setLibro(libro);
-        prestamo.setFechaLimite(LocalDate.now().plusDays(DIAS_PRESTAMO));
+        prestamo.setFechaLimite(LocalDate.now().plusDays(diasPrestamo));
         prestamo.setEstado("ACTIVO");
 
         libro.setEjemplaresDisponibles(libro.getEjemplaresDisponibles() - 1);
@@ -71,7 +75,8 @@ public class PrestamoService {
         if (!"ACTIVO".equals(prestamo.getEstado())) {
             throw new IllegalStateException("No es posible renovar un préstamo que no está activo");
         }
-        prestamo.setFechaLimite(prestamo.getFechaLimite().plusDays(DIAS_PRESTAMO));
+        int diasPrestamo = configuracionService.getValorEntero("dias_prestamo", DIAS_PRESTAMO);
+        prestamo.setFechaLimite(prestamo.getFechaLimite().plusDays(diasPrestamo));
         return prestamoRepository.save(prestamo);
     }
 
