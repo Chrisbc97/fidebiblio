@@ -39,6 +39,7 @@ CREATE TABLE libro (
   ubicacion_fisica VARCHAR(60),
   ruta_imagen TEXT,
   activo BOOLEAN DEFAULT TRUE,
+  estado_fisico VARCHAR(20) DEFAULT 'EXCELENTE', -- EXCELENTE, BUENO, REGULAR, MAL_ESTADO
   PRIMARY KEY (id_libro),
   FOREIGN KEY fk_libro_categoria (id_categoria) REFERENCES categoria(id_categoria)
 ) ENGINE = InnoDB;
@@ -83,6 +84,40 @@ CREATE TABLE sugerencia (
   FOREIGN KEY fk_sugerencia_usuario (id_usuario) REFERENCES usuario(id_usuario)
 ) ENGINE = InnoDB;
 
+-- Tabla de configuración global del sistema
+CREATE TABLE configuracion (
+  id_configuracion INT NOT NULL AUTO_INCREMENT,
+  atributo VARCHAR(30) NOT NULL UNIQUE,
+  valor VARCHAR(150) NOT NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_configuracion)
+) ENGINE = InnoDB;
+
+-- Tabla de multas 
+CREATE TABLE multa (
+  id_multa INT NOT NULL AUTO_INCREMENT,
+  id_prestamo INT NOT NULL,
+  monto DECIMAL(10,2) NOT NULL,
+  dias_atraso INT NOT NULL,
+  estado VARCHAR(20) DEFAULT 'PENDIENTE', -- PENDIENTE, PAGADA
+  fecha_generacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_pago TIMESTAMP,
+  PRIMARY KEY (id_multa),
+  FOREIGN KEY fk_multa_prestamo (id_prestamo) REFERENCES prestamo(id_prestamo)
+) ENGINE = InnoDB;
+
+-- Tabla de notificaciones
+CREATE TABLE notificacion (
+  id_notificacion INT NOT NULL AUTO_INCREMENT,
+  id_usuario INT NOT NULL,
+  mensaje VARCHAR(255) NOT NULL,
+  leida BOOLEAN DEFAULT FALSE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_notificacion),
+  FOREIGN KEY fk_notificacion_usuario (id_usuario) REFERENCES usuario(id_usuario)
+) ENGINE = InnoDB;
+
 
 -- Datos: usuarios, categorías y libros del prototipo 
 -- Usuarios de prueba 
@@ -110,3 +145,9 @@ INSERT INTO libro (isbn, titulo, autor, editorial, anio_publicacion, id_categori
 -- Préstamo de ejemplo
 INSERT INTO prestamo (id_usuario, id_libro, fecha_limite, estado) VALUES
 (3, 2, DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'ACTIVO');
+
+-- Configuración global inicial
+INSERT INTO configuracion (atributo, valor) VALUES
+('dias_prestamo', '7'),
+('limite_reservas', '3'),
+('monto_multa_diaria', '500');
