@@ -27,6 +27,7 @@
                 <a class="nav-link" th:href="@{/libro/listado}"><i class="fa-solid fa-book-open"></i> Gestión de Libros</a>
                 <a class="nav-link" th:href="@{/prestamo/listado}"><i class="fa-solid fa-calendar-check"></i> Préstamos</a>
                 <a class="nav-link" th:href="@{/multa/pendientes}"><i class="fa-solid fa-coins"></i> Multas Pendientes</a>
+                <a class="nav-link" th:href="@{/reporte/listado}"><i class="fa-solid fa-chart-line"></i> Analíticas</a>
             </div>
             <div sec:authorize="hasRole('ADMINISTRADOR')">
                 <a class="nav-link" th:href="@{/usuario/listado}"><i class="fa-solid fa-users"></i> Usuarios</a>

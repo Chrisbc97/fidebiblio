@@ -16,4 +16,10 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
     // Listado general de préstamos activos (para vista del bibliotecario)
     @Query("SELECT p FROM Prestamo p WHERE p.estado = :estado ORDER BY p.fechaLimite ASC")
     List<Prestamo> buscarPorEstado(String estado);
+
+    // Cuenta cuántos préstamos existen en total
+    long count();
+
+    @Query("SELECT p.libro.titulo, COUNT(p) as total FROM Prestamo p GROUP BY p.libro.titulo ORDER BY total DESC")
+    List<Object[]> librosMasPrestados();
 }

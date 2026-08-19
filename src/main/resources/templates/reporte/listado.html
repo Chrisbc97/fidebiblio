@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+
+        <div class="app-layout">
+            <div th:replace="~{general/fragmentos :: sidebar}"></div>
+
+            <div class="app-content">
+                <div th:replace="~{general/fragmentos :: topbar}"></div>
+
+                <section class="container-fluid p-4">
+                    <h3 style="color:#0f2a4a;">Panel de Analíticas</h3>
+                    <p class="text-muted">Visualización del estado de la biblioteca.</p>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <i class="fa-solid fa-book fa-2x mb-2" style="color:#0f2a4a;"></i>
+                                    <h3 th:text="${totalLibros}"></h3>
+                                    <small class="text-muted">Total de Libros</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <i class="fa-solid fa-users fa-2x mb-2" style="color:#0f2a4a;"></i>
+                                    <h3 th:text="${totalUsuarios}"></h3>
+                                    <small class="text-muted">Usuarios Registrados</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <i class="fa-solid fa-calendar-check fa-2x mb-2" style="color:#0f2a4a;"></i>
+                                    <h3 th:text="${prestamosActivos}"></h3>
+                                    <small class="text-muted">Préstamos Activos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <i class="fa-solid fa-coins fa-2x mb-2 text-danger"></i>
+                                    <h3 th:text="${multasPendientes}"></h3>
+                                    <small class="text-muted">Multas Pendientes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="background-color:#0f2a4a; color:white;">
+                            <i class="fa-solid fa-ranking-star"></i> Top 5 - Libros Más Prestados
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Título</th>
+                                        <th>Cantidad de Préstamos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="entrada, iter : ${topLibros}">
+                                        <td th:text="${iter.count}"></td>
+                                        <td th:text="${entrada.key}"></td>
+                                        <td th:text="${entrada.value}"></td>
+                                    </tr>
+                                    <tr th:if="${#maps.isEmpty(topLibros)}">
+                                        <td colspan="3" class="text-center text-muted">Todavía no hay préstamos registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mt-3">Total histórico de préstamos: <span th:text="${totalPrestamos}"></span></p>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

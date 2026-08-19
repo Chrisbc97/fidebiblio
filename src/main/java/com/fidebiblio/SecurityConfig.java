@@ -16,7 +16,7 @@ public class SecurityConfig {
 
     public static final String[] PUBLIC_URL = {"/login", "/fav/**", "/css/**", "/js/**", "/webjars/**"};
     public static final String[] ADMIN_URL = {"/usuario/**", "/configuracion/**"};
-    public static final String[] BIBLIOTECARIO_OR_ADMIN_URL = {"/libro/**", "/prestamo/listado", "/prestamo/renovar", "/prestamo/finalizar", "/sugerencia/estado", "/multa/pendientes", "/multa/pagar"};
+    public static final String[] BIBLIOTECARIO_OR_ADMIN_URL = {"/libro/**", "/prestamo/listado", "/prestamo/renovar", "/prestamo/finalizar", "/sugerencia/estado", "/multa/pendientes", "/multa/pagar", "/reporte/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
