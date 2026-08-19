@@ -1,9 +1,13 @@
 package com.fidebiblio.controller;
 
 import com.fidebiblio.domain.Libro;
+import com.fidebiblio.domain.Usuario;
 import com.fidebiblio.service.CategoriaService;
 import com.fidebiblio.service.LibroService;
+import com.fidebiblio.service.NotificacionService;
+import com.fidebiblio.service.UsuarioService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,18 +21,24 @@ public class LibroController {
 
     private final LibroService libroService;
     private final CategoriaService categoriaService;
+    private final UsuarioService usuarioService;
+    private final NotificacionService notificacionService;
 
-    public LibroController(LibroService libroService, CategoriaService categoriaService) {
+    public LibroController(LibroService libroService, CategoriaService categoriaService,
+            UsuarioService usuarioService, NotificacionService notificacionService) {
         this.libroService = libroService;
         this.categoriaService = categoriaService;
+        this.usuarioService = usuarioService;
+        this.notificacionService = notificacionService;
     }
 
     @GetMapping("/listado")
-    public String listado(Model model) {
+    public String listado(Model model, Principal principal) {
         var libros = libroService.getLibros(false);
         model.addAttribute("libros", libros);
         model.addAttribute("categorias", categoriaService.getCategorias(true));
         model.addAttribute("totalLibros", libros.size());
+        agregarNotificaciones(model, principal);
         return "/libro/listado";
     }
 
@@ -75,7 +85,8 @@ public class LibroController {
     }
 
     @GetMapping("/modificar/{idLibro}")
-    public String modificar(@PathVariable Integer idLibro, Model model, RedirectAttributes redirectAttributes) {
+    public String modificar(@PathVariable Integer idLibro, Model model, Principal principal,
+            RedirectAttributes redirectAttributes) {
         Optional<Libro> libroOpt = libroService.getLibro(idLibro);
         if (libroOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "El libro no existe.");
@@ -83,6 +94,13 @@ public class LibroController {
         }
         model.addAttribute("libro", libroOpt.get());
         model.addAttribute("categorias", categoriaService.getCategorias(true));
+        agregarNotificaciones(model, principal);
         return "/libro/modifica";
+    }
+
+    private void agregarNotificaciones(Model model, Principal principal) {
+        Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
+        model.addAttribute("notificacionesNoLeidas", notificacionService.contarNoLeidas(usuarioSesion.getIdUsuario()));
+        model.addAttribute("notificacionesRecientes", notificacionService.getNotificaciones(usuarioSesion.getIdUsuario()));
     }
 }

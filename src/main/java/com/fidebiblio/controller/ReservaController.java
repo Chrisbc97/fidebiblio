@@ -1,6 +1,7 @@
 package com.fidebiblio.controller;
 
 import com.fidebiblio.domain.Usuario;
+import com.fidebiblio.service.NotificacionService;
 import com.fidebiblio.service.ReservaService;
 import com.fidebiblio.service.UsuarioService;
 import java.security.Principal;
@@ -15,16 +16,20 @@ public class ReservaController {
 
     private final ReservaService reservaService;
     private final UsuarioService usuarioService;
+    private final NotificacionService notificacionService;
 
-    public ReservaController(ReservaService reservaService, UsuarioService usuarioService) {
+    public ReservaController(ReservaService reservaService, UsuarioService usuarioService,
+            NotificacionService notificacionService) {
         this.reservaService = reservaService;
         this.usuarioService = usuarioService;
+        this.notificacionService = notificacionService;
     }
 
     @GetMapping("/listado")
     public String listado(Model model, Principal principal) {
         Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
         model.addAttribute("reservas", reservaService.getReservasActivas(usuarioSesion.getIdUsuario()));
+        agregarNotificaciones(model, principal);
         return "/reserva/listado";
     }
 
@@ -54,5 +59,10 @@ public class ReservaController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/reserva/listado";
+    }
+    private void agregarNotificaciones(Model model, Principal principal) {
+        Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
+        model.addAttribute("notificacionesNoLeidas", notificacionService.contarNoLeidas(usuarioSesion.getIdUsuario()));
+        model.addAttribute("notificacionesRecientes", notificacionService.getNotificaciones(usuarioSesion.getIdUsuario()));
     }
 }

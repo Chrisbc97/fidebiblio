@@ -1,7 +1,9 @@
 package com.fidebiblio.controller;
 
+import com.fidebiblio.domain.Usuario;
 import com.fidebiblio.service.CategoriaService;
 import com.fidebiblio.service.LibroService;
+import com.fidebiblio.service.NotificacionService;
 import com.fidebiblio.service.UsuarioService;
 import java.security.Principal;
 import org.springframework.stereotype.Controller;
@@ -15,12 +17,14 @@ public class IndexController {
     private final LibroService libroService;
     private final CategoriaService categoriaService;
     private final UsuarioService usuarioService;
+    private final NotificacionService notificacionService;
 
     public IndexController(LibroService libroService, CategoriaService categoriaService,
-            UsuarioService usuarioService) {
+            UsuarioService usuarioService, NotificacionService notificacionService) {
         this.libroService = libroService;
         this.categoriaService = categoriaService;
         this.usuarioService = usuarioService;
+        this.notificacionService = notificacionService;
     }
 
     // Catálogo principal, con búsqueda por título, autor, categoría 
@@ -41,8 +45,12 @@ public class IndexController {
         }
 
         model.addAttribute("categorias", categoriaService.getCategorias(true));
-        model.addAttribute("idUsuarioSesion",
-                usuarioService.getUsuarioPorCorreo(principal.getName()).getIdUsuario());
+
+        Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
+        model.addAttribute("idUsuarioSesion", usuarioSesion.getIdUsuario());
+        model.addAttribute("notificacionesNoLeidas", notificacionService.contarNoLeidas(usuarioSesion.getIdUsuario()));
+        model.addAttribute("notificacionesRecientes", notificacionService.getNotificaciones(usuarioSesion.getIdUsuario()));
+
         return "/index";
     }
 }

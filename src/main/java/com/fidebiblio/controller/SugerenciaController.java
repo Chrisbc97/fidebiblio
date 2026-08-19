@@ -1,6 +1,7 @@
 package com.fidebiblio.controller;
 
 import com.fidebiblio.domain.Usuario;
+import com.fidebiblio.service.NotificacionService;
 import com.fidebiblio.service.SugerenciaService;
 import com.fidebiblio.service.UsuarioService;
 import java.security.Principal;
@@ -15,15 +16,19 @@ public class SugerenciaController {
 
     private final SugerenciaService sugerenciaService;
     private final UsuarioService usuarioService;
+    private final NotificacionService notificacionService;
 
-    public SugerenciaController(SugerenciaService sugerenciaService, UsuarioService usuarioService) {
+    public SugerenciaController(SugerenciaService sugerenciaService, UsuarioService usuarioService,
+            NotificacionService notificacionService) {
         this.sugerenciaService = sugerenciaService;
         this.usuarioService = usuarioService;
+        this.notificacionService = notificacionService;
     }
 
     @GetMapping("/listado")
-    public String listado(Model model) {
+    public String listado(Model model, Principal principal) {
         model.addAttribute("sugerencias", sugerenciaService.getSugerencias());
+        agregarNotificaciones(model, principal);
         return "/sugerencia/listado";
     }
 
@@ -53,5 +58,11 @@ public class SugerenciaController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/sugerencia/listado";
+    }
+
+    private void agregarNotificaciones(Model model, Principal principal) {
+        Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
+        model.addAttribute("notificacionesNoLeidas", notificacionService.contarNoLeidas(usuarioSesion.getIdUsuario()));
+        model.addAttribute("notificacionesRecientes", notificacionService.getNotificaciones(usuarioSesion.getIdUsuario()));
     }
 }

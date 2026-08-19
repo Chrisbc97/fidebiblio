@@ -33,10 +33,30 @@
                 <a class="nav-link" th:href="@{/configuracion/listado}"><i class="fa-solid fa-gear"></i> Configuración</a>
             </div>
         </div>
-        <!-- Fragmento #3: barra superior, con nombre de usuario y logout -->
+        <!-- Fragmento #3: barra superior, con notificaciones, nombre de usuario y logout -->
         <div th:fragment="topbar" class="app-topbar d-flex justify-content-between align-items-center">
             <h5 class="mb-0"></h5>
             <div class="d-flex align-items-center gap-3">
+                <div class="dropdown" id="campanitaNotificaciones">
+                    <button class="btn btn-outline-secondary btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell"></i>
+                        <span th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              th:text="${notificacionesNoLeidas}"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 300px; max-height: 350px; overflow-y: auto;">
+                        <li th:each="n : ${notificacionesRecientes}" class="mb-1">
+                            <div class="small p-2 border-bottom" th:classappend="${!n.leida} ? 'fw-bold' : 'text-muted'">
+                                <span th:text="${n.mensaje}"></span>
+                                <div class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(n.fechaCreacion,'dd/MM/yyyy HH:mm')}"></div>
+                            </div>
+                        </li>
+                        <li th:if="${#lists.isEmpty(notificacionesRecientes)}" class="text-center text-muted small p-2">
+                            Sin notificaciones
+                        </li>
+                    </ul>
+                </div>
                 <span><i class="fa-solid fa-circle-user"></i> <span sec:authentication="name"></span></span>
                 <form method="post" th:action="@{/logout}" class="mb-0">
                     <button class="btn btn-sm btn-outline-secondary" type="submit">
@@ -44,6 +64,16 @@
                     </button>
                 </form>
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var campanita = document.getElementById('campanitaNotificaciones');
+                    if (campanita) {
+                        campanita.addEventListener('shown.bs.dropdown', function () {
+                            fetch('/notificacion/marcar-leidas');
+                        });
+                    }
+                });
+            </script>
         </div>
         <!-- Fragmento #4: mensajes de éxito o error -->
         <div th:fragment="mostrarToast" class="container-fluid mt-3">

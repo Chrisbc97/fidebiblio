@@ -20,13 +20,16 @@ public class ReservaService {
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
     private final ConfiguracionService configuracionService;
+    private final NotificacionService notificacionService;
 
     public ReservaService(ReservaRepository reservaRepository, UsuarioRepository usuarioRepository,
-            LibroRepository libroRepository, ConfiguracionService configuracionService) {
+            LibroRepository libroRepository, ConfiguracionService configuracionService,
+            NotificacionService notificacionService) {
         this.reservaRepository = reservaRepository;
         this.usuarioRepository = usuarioRepository;
         this.libroRepository = libroRepository;
         this.configuracionService = configuracionService;
+        this.notificacionService = notificacionService;
     }
 
     @Transactional(readOnly = true)
@@ -79,12 +82,15 @@ public class ReservaService {
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
 
-        // Reordena las posiciones de los usuarios que quedaban antes en la cola
         List<Reserva> siguientes = reservaRepository.buscarActivasPorLibro(idLibro, "ACTIVA");
         for (Reserva r : siguientes) {
             if (r.getPosicion() != null && r.getPosicion() > posicionCancelada) {
                 r.setPosicion(r.getPosicion() - 1);
                 reservaRepository.save(r);
+                if (r.getPosicion() == 1) {
+                    notificacionService.crear(r.getUsuario(),
+                            "El libro \"" + r.getLibro().getTitulo() + "\" ya está disponible para ti");
+                }
             }
         }
     }

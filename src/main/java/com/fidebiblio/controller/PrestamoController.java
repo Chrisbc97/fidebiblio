@@ -2,6 +2,7 @@ package com.fidebiblio.controller;
 
 import com.fidebiblio.domain.Usuario;
 import com.fidebiblio.service.LibroService;
+import com.fidebiblio.service.NotificacionService;
 import com.fidebiblio.service.PrestamoService;
 import com.fidebiblio.service.UsuarioService;
 import java.security.Principal;
@@ -17,20 +18,23 @@ public class PrestamoController {
     private final PrestamoService prestamoService;
     private final UsuarioService usuarioService;
     private final LibroService libroService;
+    private final NotificacionService notificacionService;
 
     public PrestamoController(PrestamoService prestamoService, UsuarioService usuarioService,
-            LibroService libroService) {
+            LibroService libroService, NotificacionService notificacionService) {
         this.prestamoService = prestamoService;
         this.usuarioService = usuarioService;
         this.libroService = libroService;
+        this.notificacionService = notificacionService;
     }
 
     // Listado de préstamos activos para el bibliotecario
     @GetMapping("/listado")
-    public String listado(Model model) {
+    public String listado(Model model, Principal principal) {
         model.addAttribute("prestamos", prestamoService.getPrestamosActivos());
         model.addAttribute("usuarios", usuarioService.getUsuarios(true));
         model.addAttribute("libros", libroService.getLibros(true));
+        agregarNotificaciones(model, principal);
         return "/prestamo/listado";
     }
 
@@ -39,6 +43,7 @@ public class PrestamoController {
     public String historial(Model model, Principal principal) {
         Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
         model.addAttribute("prestamos", prestamoService.getHistorial(usuarioSesion.getIdUsuario()));
+        agregarNotificaciones(model, principal);
         return "/prestamo/historial";
     }
 
@@ -78,5 +83,11 @@ public class PrestamoController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/prestamo/listado";
+    }
+
+    private void agregarNotificaciones(Model model, Principal principal) {
+        Usuario usuarioSesion = usuarioService.getUsuarioPorCorreo(principal.getName());
+        model.addAttribute("notificacionesNoLeidas", notificacionService.contarNoLeidas(usuarioSesion.getIdUsuario()));
+        model.addAttribute("notificacionesRecientes", notificacionService.getNotificaciones(usuarioSesion.getIdUsuario()));
     }
 }

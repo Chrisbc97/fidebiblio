@@ -20,10 +20,13 @@ public class MultaService {
 
     private final MultaRepository multaRepository;
     private final ConfiguracionService configuracionService;
+    private final NotificacionService notificacionService;
 
-    public MultaService(MultaRepository multaRepository, ConfiguracionService configuracionService) {
+    public MultaService(MultaRepository multaRepository, ConfiguracionService configuracionService,
+            NotificacionService notificacionService) {
         this.multaRepository = multaRepository;
         this.configuracionService = configuracionService;
+        this.notificacionService = notificacionService;
     }
 
     @Transactional(readOnly = true)
@@ -36,7 +39,7 @@ public class MultaService {
         return multaRepository.findByEstadoOrderByFechaGeneracionAsc("PENDIENTE");
     }
 
-    // Genera una multa automáticamente si el préstamo se devuelve con atraso
+    // Genera una multa si el préstamo se devuelve con atraso
     @Transactional
     public void generarSiCorresponde(Prestamo prestamo) {
         LocalDate fechaLimite = prestamo.getFechaLimite();
@@ -45,6 +48,7 @@ public class MultaService {
         if (diasAtraso <= 0) {
             return;
         }
+
         if (multaRepository.findByPrestamo_IdPrestamo(prestamo.getIdPrestamo()).isPresent()) {
             return;
         }
@@ -57,6 +61,10 @@ public class MultaService {
         multa.setMonto(BigDecimal.valueOf(montoDiario * diasAtraso));
         multa.setEstado("PENDIENTE");
         multaRepository.save(multa);
+
+        notificacionService.crear(prestamo.getUsuario(),
+                "Se generó una multa de ₡" + multa.getMonto() + " por la devolución tardía de \""
+                        + prestamo.getLibro().getTitulo() + "\"");
     }
 
     // Marca una multa como pagada
